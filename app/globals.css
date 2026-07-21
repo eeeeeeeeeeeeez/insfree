@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: #FAF7F1;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(28,27,31,0.05) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+/* ---- Ticket card ---- */
+.ticket {
+  position: relative;
+  border: 1.5px solid #1C1B1F;
+  background: #FFFDF9;
+  box-shadow: 6px 6px 0 0 #1C1B1F;
+}
+
+.ticket::before,
+.ticket::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  background: #FAF7F1;
+  border: 1.5px solid #1C1B1F;
+  border-radius: 9999px;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.ticket::before {
+  left: -14px;
+}
+
+.ticket::after {
+  right: -14px;
+}
+
+.perforation {
+  border-top: 2px dashed #D8D3C7;
+}
+
+/* ---- Custom range slider (ruler / timer tape) ---- */
+input[type="range"].timer-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"].timer-slider:focus-visible {
+  outline: 2px solid #2E3192;
+  outline-offset: 6px;
+}
+
+input[type="range"].timer-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  background: #1C1B1F;
+}
+
+input[type="range"].timer-slider::-moz-range-track {
+  height: 4px;
+  background: #1C1B1F;
+}
+
+input[type="range"].timer-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: #FF5470;
+  border: 2px solid #1C1B1F;
+  box-shadow: 2px 2px 0 0 #1C1B1F;
+}
+
+input[type="range"].timer-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: #FF5470;
+  border: 2px solid #1C1B1F;
+  box-shadow: 2px 2px 0 0 #1C1B1F;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
