@@ -6,16 +6,45 @@ const TICKS = [5, 10, 15, 20, 25, 30];
 const MIN = 5;
 const MAX = 30;
 
+// 用瀏覽器 local date 當作「今天」的判斷依據
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+
+const STORAGE_KEY = "ig-consult-booking:last-submission";
+
+type Record_ = { date: string; instagram: string; minutes: number };
+
+type Status = "checking" | "idle" | "submitted" | "locked";
+
 export default function BookingPage() {
   const [handle, setHandle] = useState("");
   const [minutes, setMinutes] = useState(15);
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<Status>("checking");
+  const [record, setRecord] = useState<Record_ | null>(null);
   const [error, setError] = useState("");
   const [ticketNo, setTicketNo] = useState("——");
 
   useEffect(() => {
     // 純前端展示用的隨機單號，避免 SSR / CSR 內容不一致
     setTicketNo(String(Math.floor(100000 + Math.random() * 899999)));
+
+    // 檢查這個瀏覽器今天是否已經填過
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Record_;
+        if (parsed.date === todayKey()) {
+          setRecord(parsed);
+          setStatus("locked");
+          return;
+        }
+      }
+    } catch {
+      // localStorage 讀取失敗（例如無痕模式限制），就當作沒填過
+    }
+    setStatus("idle");
   }, []);
 
   const percent = ((minutes - MIN) / (MAX - MIN)) * 100;
@@ -35,6 +64,12 @@ export default function BookingPage() {
 
     setError("");
 
+    const newRecord: Record_ = {
+      date: todayKey(),
+      instagram: cleaned,
+      minutes,
+    };
+
     // TODO：目前尚未串接後端。
     // 之後要接資料儲存時，可以在這裡改成：
     //
@@ -46,18 +81,20 @@ export default function BookingPage() {
     //
     // 並在 app/api/book/route.ts 建立對應的 API Route，
     // 寫入 Google Sheet / Airtable / Email 通知等你想要的目的地。
-    console.log("預約送出：", { instagram: cleaned, minutes });
+    console.log("預約送出：", newRecord);
 
-    setSubmitted(true);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newRecord));
+    } catch {
+      // localStorage 寫入失敗就略過，不影響這次送出
+    }
+
+    setRecord(newRecord);
+    setStatus("submitted");
   }
 
-  function reset() {
-    setHandle("");
-    setMinutes(15);
-    setSubmitted(false);
-    setError("");
-    setTicketNo(String(Math.floor(100000 + Math.random() * 899999)));
-  }
+  const locked = status === "locked";
+  const showForm = status === "idle";
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-16">
@@ -74,14 +111,21 @@ export default function BookingPage() {
             <br />
             5–30 分鐘
           </h1>
-          <p className="mt-3 text-sm text-ink/70 leading-relaxed">
-            留下你的 Instagram，選一個你想聊的長度，
-            我們會用 IG 私訊跟你確認實際時間。
-          </p>
+
+          {showForm && (
+            <p className="mt-3 text-sm text-ink/70 leading-relaxed">
+              留下你的 Instagram，選一個你想聊的長度，
+              我們會用 IG 私訊跟你確認實際時間。每個瀏覽器一天只能預約一次。
+            </p>
+          )}
 
           <div className="perforation my-7" />
 
-          {!submitted ? (
+          {status === "checking" && (
+            <p className="font-mono text-xs text-ink/40">載入中…</p>
+          )}
+
+          {showForm && (
             <form onSubmit={handleSubmit} className="space-y-8" noValidate>
               {/* IG handle */}
               <div>
@@ -165,25 +209,39 @@ export default function BookingPage() {
                 送出預約 →
               </button>
             </form>
-          ) : (
+          )}
+
+          {status === "submitted" && record && (
             <div className="py-2">
               <p className="font-mono text-[11px] tracking-[0.14em] uppercase text-ink/60 mb-3">
                 已收到
               </p>
               <p className="font-display text-xl leading-snug">
-                @{handle.trim().replace(/^@/, "")} · {minutes} 分鐘
+                @{record.instagram} · {record.minutes} 分鐘
               </p>
               <p className="mt-3 text-sm text-ink/70 leading-relaxed">
                 我們會透過 Instagram 私訊跟你確認時間。這個表單目前還沒接後端，
                 資料只印在瀏覽器 console，之後可以接上 Google Sheet、Email 或
                 Airtable。
               </p>
-              <button
-                onClick={reset}
-                className="mt-6 font-mono text-xs uppercase tracking-wide underline underline-offset-4 text-ink/60 hover:text-ink"
-              >
-                重新填寫
-              </button>
+              <p className="mt-4 font-mono text-[11px] text-ink/45">
+                這個瀏覽器今天已經預約過了，明天可以再填一次。
+              </p>
+            </div>
+          )}
+
+          {status === "locked" && record && (
+            <div className="py-2">
+              <p className="font-mono text-[11px] tracking-[0.14em] uppercase text-coral mb-3">
+                今天已經預約過了
+              </p>
+              <p className="font-display text-xl leading-snug">
+                @{record.instagram} · {record.minutes} 分鐘
+              </p>
+              <p className="mt-3 text-sm text-ink/70 leading-relaxed">
+                這個瀏覽器今天已經送出過一次預約。想再填一次的話，
+                請明天再回來，或是換一台裝置 / 瀏覽器。
+              </p>
             </div>
           )}
         </div>
