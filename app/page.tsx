@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 const TICKS = [5, 10, 15, 20, 25, 30];
 const MIN = 5;
@@ -16,7 +16,7 @@ const STORAGE_KEY = "ig-consult-booking:last-submission";
 
 type Record_ = { date: string; instagram: string; minutes: number };
 
-type Status = "checking" | "idle" | "submitted" | "locked";
+type Status = "checking" | "idle" | "submitting" | "submitted" | "locked";
 
 export default function BookingPage() {
   const [handle, setHandle] = useState("");
@@ -47,9 +47,7 @@ export default function BookingPage() {
     setStatus("idle");
   }, []);
 
-  const percent = ((minutes - MIN) / (MAX - MIN)) * 100;
-
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const cleaned = handle.trim().replace(/^@/, "");
 
@@ -63,6 +61,7 @@ export default function BookingPage() {
     }
 
     setError("");
+    setStatus("submitting");
 
     const newRecord: Record_ = {
       date: todayKey(),
@@ -70,31 +69,39 @@ export default function BookingPage() {
       minutes,
     };
 
-    // TODO：目前尚未串接後端。
-    // 之後要接資料儲存時，可以在這裡改成：
-    //
-    // await fetch("/api/book", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ instagram: cleaned, minutes }),
-    // });
-    //
-    // 並在 app/api/book/route.ts 建立對應的 API Route，
-    // 寫入 Google Sheet / Airtable / Email 通知等你想要的目的地。
-    console.log("預約送出：", newRecord);
-
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newRecord));
-    } catch {
-      // localStorage 寫入失敗就略過，不影響這次送出
-    }
+      // TODO：目前尚未串接後端，這裡先用短暫延遲模擬送出過程。
+      // 之後要接資料儲存，把下面這行改成真正的 API 呼叫即可，例如：
+      //
+      // await fetch("/api/book", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ instagram: cleaned, minutes }),
+      // });
+      //
+      // 並在 app/api/book/route.ts 建立對應的 API Route，
+      // 寫入 Google Sheet / Airtable / Email 通知等你想要的目的地。
+      await new Promise((resolve) => setTimeout(resolve, 700));
 
-    setRecord(newRecord);
-    setStatus("submitted");
+      console.log("預約送出：", newRecord);
+
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newRecord));
+      } catch {
+        // localStorage 寫入失敗就略過，不影響這次送出
+      }
+
+      setRecord(newRecord);
+      setStatus("submitted");
+    } catch {
+      setError("送出失敗，請再試一次");
+      setStatus("idle");
+    }
   }
 
   const locked = status === "locked";
-  const showForm = status === "idle";
+  const showForm = status === "idle" || status === "submitting";
+  const submitting = status === "submitting";
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-16">
@@ -147,8 +154,9 @@ export default function BookingPage() {
                     autoComplete="off"
                     placeholder="your.ig.id"
                     value={handle}
+                    disabled={submitting}
                     onChange={(e) => setHandle(e.target.value)}
-                    className="w-full bg-transparent py-2 font-display text-lg placeholder:text-ink/25 focus:outline-none"
+                    className="w-full bg-transparent py-2 font-display text-lg placeholder:text-ink/25 focus:outline-none disabled:opacity-50"
                   />
                 </div>
                 {error && (
@@ -177,11 +185,12 @@ export default function BookingPage() {
                   <input
                     id="minutes"
                     type="range"
-                    className="timer-slider"
+                    className="timer-slider disabled:opacity-50"
                     min={MIN}
                     max={MAX}
                     step={5}
                     value={minutes}
+                    disabled={submitting}
                     onChange={(e) => setMinutes(Number(e.target.value))}
                     aria-valuetext={`${minutes} 分鐘`}
                   />
@@ -204,9 +213,21 @@ export default function BookingPage() {
 
               <button
                 type="submit"
-                className="w-full bg-indigo text-paper font-display font-semibold text-lg py-3.5 border border-ink shadow-[3px_3px_0_0_#1C1B1F] hover:shadow-[1px_1px_0_0_#1C1B1F] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                disabled={submitting}
+                aria-busy={submitting}
+                className="w-full flex items-center justify-center gap-2.5 bg-indigo text-paper font-display font-semibold text-lg py-3.5 border border-ink shadow-[3px_3px_0_0_#1C1B1F] transition-all enabled:hover:shadow-[1px_1px_0_0_#1C1B1F] enabled:hover:translate-x-[2px] enabled:hover:translate-y-[2px] disabled:opacity-80 disabled:cursor-not-allowed"
               >
-                送出預約 →
+                {submitting ? (
+                  <>
+                    <span
+                      className="h-4 w-4 rounded-full border-2 border-paper/40 border-t-paper animate-spin"
+                      aria-hidden="true"
+                    />
+                    送出中…
+                  </>
+                ) : (
+                  <>送出預約 →</>
+                )}
               </button>
             </form>
           )}
