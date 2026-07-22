@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "5–30 分鐘專家諮詢預約";
+export const alt = "免費增加 5–30 位IG粉絲";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -42,7 +42,7 @@ export default async function Image() {
               color: "rgba(28,27,31,0.55)",
             }}
           >
-            <span>Booking Slip · 預約單</span>
+            <span>Booking Slip ·IG免費增粉</span>
             <span>No. 000123</span>
           </div>
 
@@ -56,7 +56,7 @@ export default async function Image() {
               color: "#1C1B1F",
             }}
           >
-            <span>找專家聊 5–30 分鐘</span>
+            <span>免費增加 5–30 位IG粉絲</span>
           </div>
 
           <div
@@ -88,7 +88,7 @@ export default async function Image() {
                 border: "3px solid #1C1B1F",
               }}
             >
-              送出預約 →
+              送出申請 →
             </div>
           </div>
         </div>
