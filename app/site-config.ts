@@ -19,7 +19,7 @@ function resolveSiteUrl(): string {
 
 export const SITE_URL = resolveSiteUrl();
 
-export const SITE_NAME = "IG 諮詢預約單";
-export const SITE_TITLE = "5–30 分鐘專家諮詢預約｜留下你的 Instagram";
+export const SITE_NAME = "IG 免費增粉";
+export const SITE_TITLE = "免費增加5–30 位IG粉絲｜留下你的 Instagram";
 export const SITE_DESCRIPTION =
-  "留下你的 Instagram 帳號，選擇想聊 5 到 30 分鐘，我們會透過 Instagram 私訊確認諮詢時間。";
+  "留下你的 Instagram 帳號，選擇想增加 5 至 30 位IG粉絲，我們會在48小時內將粉絲增加至您的帳號。";
