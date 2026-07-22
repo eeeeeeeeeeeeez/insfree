@@ -83,7 +83,7 @@ export default function BookingPage() {
       // 寫入 Google Sheet / Airtable / Email 通知等你想要的目的地。
       await new Promise((resolve) => setTimeout(resolve, 700));
 
-      console.log("預約送出：", newRecord);
+      console.log("申請送出：", newRecord);
 
       try {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newRecord));
@@ -109,20 +109,20 @@ export default function BookingPage() {
         <div className="ticket -rotate-1 px-8 py-9 sm:px-10 sm:py-10">
           {/* Header */}
           <div className="flex items-start justify-between font-mono text-[11px] tracking-[0.18em] uppercase text-ink/60">
-            <span>Booking Slip · 預約單</span>
+            <span>Booking Slip · IG免費增粉</span>
             <span>No. {ticketNo}</span>
           </div>
 
           <h1 className="font-display font-semibold text-[2rem] sm:text-[2.3rem] leading-[1.15] mt-4">
-            找專家聊
+            免費增加
             <br />
-            5–30 分鐘
+            5–30 位 IG 粉絲
           </h1>
 
           {showForm && (
             <p className="mt-3 text-sm text-ink/70 leading-relaxed">
-              留下你的 Instagram，選一個你想聊的長度，
-              我們會用 IG 私訊跟你確認實際時間。每個瀏覽器一天只能預約一次。
+              留下你的 Instagram，選你想增加的粉絲數，
+              我們會在申請後48小時內，將粉絲增加到您的帳戶。
             </p>
           )}
 
@@ -226,7 +226,7 @@ export default function BookingPage() {
                     送出中…
                   </>
                 ) : (
-                  <>送出預約 →</>
+                  <>送出申請 →</>
                 )}
               </button>
             </form>
@@ -241,12 +241,10 @@ export default function BookingPage() {
                 @{record.instagram} · {record.minutes} 分鐘
               </p>
               <p className="mt-3 text-sm text-ink/70 leading-relaxed">
-                我們會透過 Instagram 私訊跟你確認時間。這個表單目前還沒接後端，
-                資料只印在瀏覽器 console，之後可以接上 Google Sheet、Email 或
-                Airtable。
+               申請後48小時內，會將粉絲增加到您的帳戶
               </p>
               <p className="mt-4 font-mono text-[11px] text-ink/45">
-                這個瀏覽器今天已經預約過了，明天可以再填一次。
+                今天已經申請過了，明天可以再申請一次。
               </p>
             </div>
           )}
@@ -254,21 +252,20 @@ export default function BookingPage() {
           {status === "locked" && record && (
             <div className="py-2">
               <p className="font-mono text-[11px] tracking-[0.14em] uppercase text-coral mb-3">
-                今天已經預約過了
+                今天已經申請過了
               </p>
               <p className="font-display text-xl leading-snug">
                 @{record.instagram} · {record.minutes} 分鐘
               </p>
               <p className="mt-3 text-sm text-ink/70 leading-relaxed">
-                這個瀏覽器今天已經送出過一次預約。想再填一次的話，
-                請明天再回來，或是換一台裝置 / 瀏覽器。
+                今天已經申請過一次。想再申請一次的話，請明天再回來。
               </p>
             </div>
           )}
         </div>
 
         <p className="text-center font-mono text-[11px] text-ink/40 mt-6">
-          撕下票根，留個時間給自己
+          撕下票根，留個紀錄給自己
         </p>
       </div>
     </main>
