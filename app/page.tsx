@@ -173,11 +173,11 @@ export default function BookingPage() {
                     htmlFor="minutes"
                     className="font-mono text-[11px] tracking-[0.14em] uppercase text-ink/60"
                   >
-                    想聊多久
+                    想增加多少IG粉絲
                   </label>
                   <span className="font-mono text-3xl leading-none tabular-nums">
                     {minutes}
-                    <span className="text-sm text-ink/50 ml-1">分鐘</span>
+                    <span className="text-sm text-ink/50 ml-1">位粉絲</span>
                   </span>
                 </div>
 
@@ -192,7 +192,7 @@ export default function BookingPage() {
                     value={minutes}
                     disabled={submitting}
                     onChange={(e) => setMinutes(Number(e.target.value))}
-                    aria-valuetext={`${minutes} 分鐘`}
+                    aria-valuetext={`${minutes} 位粉絲`}
                   />
                   <div className="relative h-4 mt-1">
                     {TICKS.map((t) => {
@@ -238,7 +238,7 @@ export default function BookingPage() {
                 已收到
               </p>
               <p className="font-display text-xl leading-snug">
-                @{record.instagram} · {record.minutes} 分鐘
+                @{record.instagram} · {record.minutes} 位粉絲
               </p>
               <p className="mt-3 text-sm text-ink/70 leading-relaxed">
                申請後48小時內，會將粉絲增加到您的帳戶
@@ -255,7 +255,7 @@ export default function BookingPage() {
                 今天已經申請過了
               </p>
               <p className="font-display text-xl leading-snug">
-                @{record.instagram} · {record.minutes} 分鐘
+                @{record.instagram} · {record.minutes} 位粉絲
               </p>
               <p className="mt-3 text-sm text-ink/70 leading-relaxed">
                 今天已經申請過一次。想再申請一次的話，請明天再回來。
