@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: `%s｜${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  keywords: ["專家諮詢", "Instagram 諮詢", "線上諮詢預約", "IG 諮詢", "預約表單"],
+  keywords: ["免費增粉", "Instagram 增粉", "INS免費粉絲", "增粉", "免費粉絲"],
   alternates: {
     canonical: "/",
   },
@@ -58,8 +58,8 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
-  name: "5–30 分鐘專家諮詢",
-  serviceType: "線上諮詢",
+  name: "免費IG增粉",
+  serviceType: "免費增加IG粉絲",
   description: SITE_DESCRIPTION,
   areaServed: "TW",
   provider: {
